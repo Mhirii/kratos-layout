@@ -7,9 +7,11 @@
 package main
 
 import (
+	"context"
 	"github.com/go-kratos/kratos-layout/internal/biz"
 	"github.com/go-kratos/kratos-layout/internal/conf"
 	"github.com/go-kratos/kratos-layout/internal/data"
+	"github.com/go-kratos/kratos-layout/internal/dep"
 	"github.com/go-kratos/kratos-layout/internal/server"
 	"github.com/go-kratos/kratos-layout/internal/service"
 	"github.com/go-kratos/kratos/v2"
@@ -23,16 +25,40 @@ import (
 // Injectors from wire.go:
 
 // wireApp init kratos application.
-func wireApp(confServer *conf.Server, confData *conf.Data, logger log.Logger) (*kratos.App, func(), error) {
+func wireApp(contextContext context.Context, bootstrap *conf.Bootstrap, confServer *conf.Server, confData *conf.Data, logger log.Logger) (*kratos.App, func(), error) {
 	dataData, cleanup, err := data.NewData(confData, logger)
 	if err != nil {
 		return nil, nil, err
 	}
-	greeterRepo := data.NewGreeterRepo(dataData, logger)
-	greeterUsecase := biz.NewGreeterUsecase(greeterRepo, logger)
-	greeterService := service.NewGreeterService(greeterUsecase)
-	grpcServer := server.NewGRPCServer(confServer, greeterService, logger)
-	httpServer := server.NewHTTPServer(confServer, greeterService, logger)
+	usersRepo := data.NewUsersRepo(dataData, logger)
+	usersUsecase := biz.NewUsersUsecase(usersRepo, logger)
+	usersService := service.NewUsersService(usersUsecase, logger)
+	meterProvider, err := dep.NewMeterProvider(bootstrap)
+	if err != nil {
+		cleanup()
+		return nil, nil, err
+	}
+	meter, err := dep.NewMeter(bootstrap, meterProvider)
+	if err != nil {
+		cleanup()
+		return nil, nil, err
+	}
+	textMapPropagator := dep.NewTextMapPropagator()
+	tracerProvider, err := dep.NewTracerProvider(contextContext, bootstrap, textMapPropagator)
+	if err != nil {
+		cleanup()
+		return nil, nil, err
+	}
+	grpcServer, err := server.NewGRPCServer(confServer, usersService, logger, meter, tracerProvider)
+	if err != nil {
+		cleanup()
+		return nil, nil, err
+	}
+	httpServer, err := server.NewHTTPServer(confServer, usersService, logger, meter, tracerProvider)
+	if err != nil {
+		cleanup()
+		return nil, nil, err
+	}
 	app := newApp(logger, grpcServer, httpServer)
 	return app, func() {
 		cleanup()

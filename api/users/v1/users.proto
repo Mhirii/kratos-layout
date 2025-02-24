@@ -1,0 +1,107 @@
+syntax = "proto3";
+
+package api.users.v1;
+
+import "google/api/annotations.proto";
+
+option go_package = "users/api/users/v1;v1";
+option java_multiple_files = true;
+option java_package = "api.users.v1";
+
+service Users {
+  rpc CreateUsers (CreateUsersRequest) returns (CreateUsersReply){
+    option (google.api.http) = {
+      post: "/users"
+      body: "*"
+    };
+  };
+  rpc UpdateUsers (UpdateUsersRequest) returns (UpdateUsersReply){
+    option (google.api.http) = {
+      patch: "/users"
+      body: "*"
+    };
+  };
+  rpc DeleteUsers (DeleteUsersRequest) returns (DeleteUsersReply){
+    option (google.api.http) = {
+      delete: "/users/{id}"
+    };
+  };
+  rpc GetUsers (GetUsersRequest) returns (GetUsersReply){
+    option (google.api.http) = {
+      get: "/users/{id}"
+    };
+  };
+  rpc ListUsers (ListUsersRequest) returns (ListUsersReply){
+    option (google.api.http) = {
+      get: "/users"
+    };
+  };
+}
+
+message CreateUsersRequest {
+  string username = 1;
+  string email = 2;
+  optional string phone = 3;
+}
+message CreateUsersReply {
+  string id = 1;
+  string username = 2;
+  string email = 3;
+  optional string phone = 4;
+}
+
+message UpdateUsersRequest {
+  string id = 1;
+  optional string username = 2;
+  optional string email = 3;
+  optional string phone = 4;
+}
+message UpdateUsersReply {
+  string id = 1;
+  string username = 2;
+  string email = 3;
+  optional string phone = 4;
+}
+
+message DeleteUsersRequest {
+  string id = 1;
+}
+message DeleteUsersReply {
+  string id = 1;
+}
+
+message GetUsersRequest {
+  string id = 1;
+}
+message GetUsersReply {
+  string id = 1;
+  string username = 2;
+  string email = 3;
+  optional string phone = 4;
+}
+
+message ListUsersUser {
+  string id = 1;
+  optional string username = 2;
+  optional string email = 3;
+  optional string phone = 4;
+}
+
+message ListUsersRequest {
+  string query = 1;
+  int32 page = 2;
+  int32 page_size = 3;
+  bool reverse = 4;
+  optional string sort_by = 5;
+  optional string sort_order = 6;
+  repeated string fields = 7;
+  map<string, string> filters = 8;
+}
+message ListUsersReply {
+  repeated ListUsersUser users = 1;
+  int32 page = 2;
+  int32 page_size = 3;
+  int32 total = 4;
+  int32 total_pages = 5;
+  bool reverse = 6;
+}

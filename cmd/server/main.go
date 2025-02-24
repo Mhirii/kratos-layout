@@ -1,7 +1,9 @@
 package main
 
 import (
+	"context"
 	"flag"
+	"github.com/go-kratos/kratos-layout/internal/dep"
 	"os"
 
 	"github.com/go-kratos/kratos-layout/internal/conf"
@@ -49,21 +51,15 @@ func newApp(logger log.Logger, gs *grpc.Server, hs *http.Server) *kratos.App {
 
 func main() {
 	flag.Parse()
-	logger := log.With(log.NewStdLogger(os.Stdout),
-		"ts", log.DefaultTimestamp,
-		"caller", log.DefaultCaller,
-		"service.id", id,
-		"service.name", Name,
-		"service.version", Version,
-		"trace.id", tracing.TraceID(),
-		"span.id", tracing.SpanID(),
-	)
 	c := config.New(
 		config.WithSource(
 			file.NewSource(flagconf),
 		),
 	)
 	defer c.Close()
+
+	// migrate here
+	// data.Migrate()
 
 	if err := c.Load(); err != nil {
 		panic(err)
@@ -74,7 +70,27 @@ func main() {
 		panic(err)
 	}
 
-	app, cleanup, err := wireApp(bc.Server, bc.Data, logger)
+	if bc.Metadata.Name != "" {
+		Name = bc.Metadata.Name
+	}
+
+	logger, err := dep.NewZapLogger(&bc)
+	if err != nil {
+		panic(err)
+	}
+	logger = log.With(logger,
+		"ts", log.DefaultTimestamp,
+		"caller", log.Caller(7),
+		"service.id", id,
+		"service.name", Name,
+		"service.version", Version,
+		"trace.id", tracing.TraceID(),
+		"span.id", tracing.SpanID(),
+	)
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	app, cleanup, err := wireApp(ctx, &bc, bc.Server, bc.Data, logger)
 	if err != nil {
 		panic(err)
 	}

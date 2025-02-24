@@ -1,0 +1,24 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="main" type="GoApplicationRunConfiguration" factoryName="Go Application">
+    <module name="kratos-layout" />
+    <working_directory value="$PROJECT_DIR$" />
+    <parameters value="-conf configs" />
+    <envs>
+      <env name="DB_HOST" value="" />
+      <env name="DB_NAME" value="" />
+      <env name="DB_PASS" value="" />
+      <env name="DB_PORT" value="" />
+      <env name="DB_SSLMODE" value="" />
+      <env name="DB_USER" value="" />
+      <env name="DRIVER" value="" />
+    </envs>
+    <kind value="PACKAGE" />
+    <package value="github.com/go-kratos/kratos-layout/cmd/server" />
+    <directory value="$PROJECT_DIR$" />
+    <filePath value="$PROJECT_DIR$/cmd/users/main.go" />
+    <pty_enabled value="true" />
+    <method v="2">
+      <option name="FwBeforeLaunchTask" enabled="true" />
+    </method>
+  </configuration>
+</component>

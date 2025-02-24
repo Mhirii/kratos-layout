@@ -1,13 +1,42 @@
 syntax = "proto3";
 package kratos.api;
 
-option go_package = "github.com/go-kratos/kratos-layout/internal/conf;conf";
+option go_package = "github.com/mhirii/kratos-layout/internal/conf;conf";
 
 import "google/protobuf/duration.proto";
 
 message Bootstrap {
   Server server = 1;
   Data data = 2;
+  AppMetadata metadata = 3;
+  Otel otel = 4;
+  Log log = 5;
+}
+
+message AppMetadata {
+  enum Environment {
+    NONE = 0;
+    DEV = 1;
+    PRE = 2;
+    PRD = 3;
+  }
+  string name = 1;
+  Environment env = 2;
+}
+
+message Otel {
+  message Trace {
+    string endpoint = 1;
+    bool insecure = 2;
+  }
+  message Metric {
+    bool enable_exemplar = 1;
+  }
+  Trace trace = 1;
+  Metric metric = 2;
+}
+message Log {
+  string filepath = 1;
 }
 
 message Server {
@@ -39,3 +68,4 @@ message Data {
   Database database = 1;
   Redis redis = 2;
 }
+

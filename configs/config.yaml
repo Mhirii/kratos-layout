@@ -7,9 +7,21 @@ server:
     timeout: 1s
 data:
   database:
-    driver: mysql
-    source: root:root@tcp(127.0.0.1:3306)/test?parseTime=True&loc=Local
+    driver: pgx
+    source: postgres://pg:pg@localhost:5432/db?sslmode=disable
   redis:
     addr: 127.0.0.1:6379
     read_timeout: 0.2s
     write_timeout: 0.2s
+
+metadata:
+  name: "layout"
+  env: DEV
+otel:
+  trace:
+    endpoint: "localhost:4318"
+    insecure: true
+  metric:
+    enable_exemplar: true
+log:
+  filepath: "app.log"

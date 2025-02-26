@@ -16,7 +16,18 @@ func (f LogWrapper) Log(level log.Level, keyvals ...interface{}) error {
 }
 
 func NewZapLogger(bc *conf.Bootstrap) (log.Logger, error) {
-	cfg := zap.NewProductionConfig()
+	env := bc.GetMetadata().GetEnv().String()
+	var cfg zap.Config
+	switch env {
+	case "PROD":
+		cfg = zap.NewProductionConfig()
+	case "DEV":
+		cfg = zap.NewDevelopmentConfig()
+	case "TEST":
+		cfg = zap.NewDevelopmentConfig()
+	default:
+		cfg = zap.NewProductionConfig()
+	}
 	cfg.OutputPaths = []string{"stderr"}
 	logfile := bc.GetLog().GetFilepath()
 	if logfile != "" {
@@ -47,7 +58,9 @@ func NewZapLogger(bc *conf.Bootstrap) (log.Logger, error) {
 			value := fmt.Sprintf("%v", keyvals[i+1])
 
 			if key == "msg" {
-				msg = value // Set msg separately
+				msg = value
+			} else if key == "ts" {
+				fields = append(fields, zap.String("timestamp", value))
 			} else {
 				fields = append(fields, zap.String(key, value))
 			}

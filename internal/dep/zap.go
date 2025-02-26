@@ -2,6 +2,7 @@ package dep
 
 import (
 	"fmt"
+
 	"github.com/go-kratos/kratos-layout/internal/conf"
 
 	"github.com/go-kratos/kratos/v2/log"
@@ -40,10 +41,18 @@ func NewZapLogger(bc *conf.Bootstrap) (log.Logger, error) {
 			zapLevel = zap.FatalLevel
 		}
 		var fields []zap.Field
+		var msg string
 		for i := 0; i < len(keyvals); i += 2 {
-			fields = append(fields, zap.String(fmt.Sprintf("%v", keyvals[i]), fmt.Sprintf("%v", keyvals[i+1])))
+			key := fmt.Sprintf("%v", keyvals[i])
+			value := fmt.Sprintf("%v", keyvals[i+1])
+
+			if key == "msg" {
+				msg = value // Set msg separately
+			} else {
+				fields = append(fields, zap.String(key, value))
+			}
 		}
-		logger.Log(zapLevel, "", fields...)
+		logger.Log(zapLevel, msg, fields...)
 		return nil
 	}), nil
 }

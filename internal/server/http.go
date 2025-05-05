@@ -1,17 +1,19 @@
 package server
 
 import (
-	"github.com/gorilla/handlers"
 	productsV1 "layout/api/products/v1"
 	usersV1 "layout/api/users/v1"
 	"layout/internal/conf"
 	"layout/internal/service"
+
+	"github.com/gorilla/handlers"
 
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware/logging"
 	"github.com/go-kratos/kratos/v2/middleware/metrics"
 	"github.com/go-kratos/kratos/v2/middleware/recovery"
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
+	"github.com/go-kratos/kratos/v2/middleware/validate"
 	"github.com/go-kratos/kratos/v2/transport/http"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
@@ -46,6 +48,7 @@ func NewHTTPServer(
 				metrics.WithRequests(counter),
 				metrics.WithSeconds(seconds),
 			),
+			validate.Validator(),
 		),
 	}
 	if c.Http.GetCors().GetEnabled() {

@@ -11,6 +11,7 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware/metrics"
 	"github.com/go-kratos/kratos/v2/middleware/recovery"
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
+	"github.com/go-kratos/kratos/v2/middleware/validate"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 
 	"go.opentelemetry.io/otel/metric"
@@ -44,6 +45,7 @@ func NewGRPCServer(
 				metrics.WithRequests(counter),
 				metrics.WithSeconds(seconds),
 			),
+			validate.Validator(),
 		),
 	}
 	if c.Grpc.Network != "" {

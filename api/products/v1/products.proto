@@ -3,6 +3,7 @@ syntax = "proto3";
 package products.v1;
 
 import "google/api/annotations.proto";
+import "validate/validate.proto";
 
 option go_package = "server/api/products/v1;v1";
 option java_multiple_files = true;
@@ -54,9 +55,9 @@ message Product {
 }
 
 message CreateProductRequest {
-  string name = 1;
-  string description = 2;
-  float price = 3;
+  string name = 1 [(validate.rules).string.min_len = 3];
+  string description = 2 [(validate.rules).string.min_len = 3];
+  float price = 3 [(validate.rules).float.gt = 0];
   optional string category = 4;
   repeated string tags = 5;
   map<string, string> attributes = 6;
@@ -87,9 +88,9 @@ message ListProductsResponse {
 
 message UpdateProductRequest {
   string id = 1;
-  optional string name = 2;
-  optional string description = 3;
-  optional float price = 4;
+  optional string name = 2 [(validate.rules).string.min_len = 3];
+  optional string description = 3 [(validate.rules).string.min_len = 3];
+  optional float price = 4 [(validate.rules).float.gt = 0];
   optional string category = 5;
   repeated string tags = 6;
   map<string, string> attributes = 7;

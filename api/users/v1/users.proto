@@ -3,44 +3,37 @@ syntax = "proto3";
 package users.v1;
 
 import "google/api/annotations.proto";
+import "validate/validate.proto";
 
 option go_package = "server/api/users/v1;v1";
 option java_multiple_files = true;
-option java_package = "dev.kratos.api.users.v1";
 option java_outer_classname = "UsersProtoV1";
+option java_package = "dev.kratos.api.users.v1";
 
 service Users {
-  rpc CreateUser (CreateUserRequest) returns (CreateUserResponse) {
+  rpc CreateUser(CreateUserRequest) returns (CreateUserResponse) {
     option (google.api.http) = {
       post: "/users"
       body: "*"
     };
   }
-  rpc GetUser (GetUserRequest) returns (GetUserResponse) {
-    option (google.api.http) = {
-      get: "/users/{id}"
-    };
+  rpc GetUser(GetUserRequest) returns (GetUserResponse) {
+    option (google.api.http) = {get: "/users/{id}"};
   }
-  rpc ListUsers (ListUsersRequest) returns (ListUsersResponse) {
-    option (google.api.http) = {
-      get: "/users"
-    };
+  rpc ListUsers(ListUsersRequest) returns (ListUsersResponse) {
+    option (google.api.http) = {get: "/users"};
   }
-  rpc UpdateUser (UpdateUserRequest) returns (UpdateUserResponse) {
+  rpc UpdateUser(UpdateUserRequest) returns (UpdateUserResponse) {
     option (google.api.http) = {
       patch: "/users/{id}"
       body: "*"
     };
   }
-  rpc DeleteUser (DeleteUserRequest) returns (DeleteUserResponse) {
-    option (google.api.http) = {
-      delete: "/users/{id}"
-    };
+  rpc DeleteUser(DeleteUserRequest) returns (DeleteUserResponse) {
+    option (google.api.http) = {delete: "/users/{id}"};
   }
-  rpc SearchUsers (SearchUsersRequest) returns (SearchUsersResponse) {
-    option (google.api.http) = {
-      get: "/users/search"
-    };
+  rpc SearchUsers(SearchUsersRequest) returns (SearchUsersResponse) {
+    option (google.api.http) = {get: "/users/search"};
   }
 }
 
@@ -67,9 +60,9 @@ message User {
 }
 
 message CreateUserRequest {
-  string username = 1;
-  string email = 2;
-  string phone = 3;
+  string username = 1 [(validate.rules).string.min_len = 3];
+  string email = 2 [(validate.rules).string.email = true];
+  string phone = 3 [(validate.rules).string.min_len = 8];
   optional string password = 4;
   optional string picture = 5;
 }
@@ -77,7 +70,6 @@ message CreateUserRequest {
 message CreateUserResponse {
   string id = 1;
 }
-
 
 message GetUserRequest {
   string id = 1;
@@ -99,10 +91,10 @@ message ListUsersResponse {
 
 message UpdateUserRequest {
   string id = 1;
-  optional string username = 2;
-  optional string email = 3;
-  optional string phone = 4;
-  optional string password = 5;
+  optional string username = 2 [(validate.rules).string.min_len = 3];
+  optional string email = 3 [(validate.rules).string.email = true];
+  optional string phone = 4 [(validate.rules).string.min_len = 8];
+  optional string password = 5 [(validate.rules).string.min_len = 8];
   optional string picture = 6;
 }
 

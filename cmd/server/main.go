@@ -8,6 +8,8 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
 
 	"layout/internal/conf"
+	"layout/internal/data"
+	"layout/pkg/datasource"
 	"layout/pkg/monitor"
 
 	"github.com/go-kratos/kratos/v2"
@@ -91,7 +93,7 @@ func main() {
 	}
 	defer cleanup()
 
-	// dep.GormMigrate(ctx, bc.Data, logger, &data.Users{})
+	datasource.GormMigrate(ctx, bc.Data, logger, &data.Users{})
 
 	log.NewHelper(logger).Debug("Starting Server")
 	if err := app.Run(); err != nil {

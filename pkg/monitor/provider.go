@@ -1,14 +1,11 @@
-package dep
+package monitor
 
 import "github.com/google/wire"
 
-var DepProviderSet = wire.NewSet(
-	NewZapLogger,
-	NewLogrusLogger,
+var MonitorProviderSet = wire.NewSet(
 	NewMeter,
 	NewMeterProvider,
 	NewTracer,
 	NewTracerProvider,
 	NewTextMapPropagator,
-	NewNats,
 )

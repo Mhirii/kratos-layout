@@ -10,10 +10,10 @@ import (
 	"layout/internal/biz"
 	"layout/internal/conf"
 	"layout/internal/data"
-	"layout/internal/dep"
 	"layout/internal/server"
 	"layout/internal/service"
 	"layout/pkg/datasource"
+	"layout/pkg/monitor"
 
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/log"
@@ -25,11 +25,11 @@ func wireApp(context.Context, *conf.Bootstrap, *conf.Server, *conf.Data, log.Log
 	panic(
 		wire.Build(
 			datasource.DatasourceProviderSet,
+			monitor.MonitorProviderSet,
 			server.SrvrProviderSet,
 			data.DataProviderSet,
 			biz.BizProviderSet,
 			service.ServiceProviderSet,
-			dep.DepProviderSet,
 			newApp,
 		),
 	)

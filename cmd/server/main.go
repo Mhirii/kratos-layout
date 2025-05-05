@@ -8,7 +8,7 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
 
 	"layout/internal/conf"
-	"layout/internal/dep"
+	"layout/pkg/monitor"
 
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/config"
@@ -71,7 +71,7 @@ func main() {
 	}
 
 	// init logger
-	lg := dep.NewLogger(&bc)
+	lg := monitor.NewLogger(&bc)
 	logger := log.With(lg,
 		"caller", log.DefaultCaller,
 		"service.id", id,

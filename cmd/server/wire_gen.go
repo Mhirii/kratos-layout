@@ -13,10 +13,10 @@ import (
 	"layout/internal/biz"
 	"layout/internal/conf"
 	"layout/internal/data"
-	"layout/internal/dep"
 	"layout/internal/server"
 	"layout/internal/service"
 	"layout/pkg/datasource"
+	"layout/pkg/monitor"
 )
 
 import (
@@ -27,8 +27,8 @@ import (
 
 // wireApp init kratos application.
 func wireApp(contextContext context.Context, bootstrap *conf.Bootstrap, confServer *conf.Server, confData *conf.Data, logger log.Logger) (*kratos.App, func(), error) {
-	textMapPropagator := dep.NewTextMapPropagator()
-	tracerProvider, err := dep.NewTracerProvider(contextContext, bootstrap, textMapPropagator)
+	textMapPropagator := monitor.NewTextMapPropagator()
+	tracerProvider, err := monitor.NewTracerProvider(contextContext, bootstrap, textMapPropagator)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -52,7 +52,7 @@ func wireApp(contextContext context.Context, bootstrap *conf.Bootstrap, confServ
 	if err != nil {
 		return nil, nil, err
 	}
-	tracer, err := dep.NewTracer(bootstrap, tracerProvider)
+	tracer, err := monitor.NewTracer(bootstrap, tracerProvider)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -68,11 +68,11 @@ func wireApp(contextContext context.Context, bootstrap *conf.Bootstrap, confServ
 	}
 	productsUsecase := biz.NewProductsUsecase(productsRepo, logger)
 	productsService := service.NewProductsService(productsUsecase, logger)
-	meterProvider, err := dep.NewMeterProvider(bootstrap)
+	meterProvider, err := monitor.NewMeterProvider(bootstrap)
 	if err != nil {
 		return nil, nil, err
 	}
-	meter, err := dep.NewMeter(bootstrap, meterProvider)
+	meter, err := monitor.NewMeter(bootstrap, meterProvider)
 	if err != nil {
 		return nil, nil, err
 	}

@@ -1,13 +1,34 @@
-package dep
+package monitor
 
 import (
 	"fmt"
 	"os"
 
+	"layout/internal/conf"
+
 	"github.com/go-kratos/kratos/v2/log"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )
+
+func NewLogger(c *conf.Bootstrap) log.Logger {
+	level := zap.NewAtomicLevelAt(zap.DebugLevel)
+	return NewZapLogger(zapcore.EncoderConfig{
+		MessageKey:     "msg",
+		LevelKey:       "level",
+		TimeKey:        "ts",
+		NameKey:        "name",
+		CallerKey:      "caller",
+		FunctionKey:    "fn",
+		StacktraceKey:  "stack",
+		EncodeLevel:    zapcore.CapitalColorLevelEncoder,
+		EncodeTime:     zapcore.ISO8601TimeEncoder,
+		EncodeDuration: zapcore.StringDurationEncoder,
+		EncodeCaller:   zapcore.ShortCallerEncoder,
+		EncodeName:     zapcore.FullNameEncoder,
+		LineEnding:     zapcore.DefaultLineEnding,
+	}, level)
+}
 
 var _ log.Logger = (*ZapLogger)(nil)
 
@@ -19,7 +40,6 @@ type ZapLogger struct {
 
 // NewZapLogger return a zap logger.
 func NewZapLogger(encoder zapcore.EncoderConfig, level zap.AtomicLevel, opts ...zap.Option) *ZapLogger {
-
 	core := zapcore.NewCore(
 		zapcore.NewConsoleEncoder(encoder),
 		zapcore.NewMultiWriteSyncer(

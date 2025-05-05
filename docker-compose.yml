@@ -1,0 +1,36 @@
+version: "3.8"
+
+services:
+  pg:
+    image: postgres:16.6-alpine3.21
+    container_name: kratos-postgres
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: pg
+      POSTGRES_PASSWORD: pg
+      POSTGRES_DB: users
+  mongo:
+    image: mongo:7.0
+    container_name: kratos-mongodb
+    ports:
+      - 27017:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+  redis:
+    image: redis:alpine
+    container_name: kratos-redis
+    ports:
+      - 6379:6379
+
+  nats:
+    image: nats:latest
+    container_name: kratos-nats
+    command: ["-js"]
+    ports:
+      - 4222:4222
+      - 8222:8222
+      - 6222:6222
+      - 4244:4244
+      - 8244:8244

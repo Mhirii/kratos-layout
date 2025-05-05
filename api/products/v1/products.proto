@@ -1,0 +1,120 @@
+syntax = "proto3";
+
+package products.v1;
+
+import "google/api/annotations.proto";
+
+option go_package = "server/api/products/v1;v1";
+option java_multiple_files = true;
+option java_outer_classname = "ProductsProtoV1";
+option java_package = "dev.kratos.api.products.v1";
+
+service Products {
+  rpc CreateProduct(CreateProductRequest) returns (CreateProductResponse) {
+    option (google.api.http) = {
+      post: "/products"
+      body: "*"
+    };
+  }
+  rpc GetProduct(GetProductRequest) returns (GetProductResponse) {
+    option (google.api.http) = {get: "/products/{id}"};
+  }
+  rpc ListProducts(ListProductsRequest) returns (ListProductsResponse) {
+    option (google.api.http) = {get: "/products"};
+  }
+  rpc UpdateProduct(UpdateProductRequest) returns (UpdateProductResponse) {
+    option (google.api.http) = {
+      patch: "/products/{id}"
+      body: "*"
+    };
+  }
+  rpc DeleteProduct(DeleteProductRequest) returns (DeleteProductResponse) {
+    option (google.api.http) = {delete: "/products/{id}"};
+  }
+  rpc SearchProducts(SearchProductsRequest) returns (SearchProductsResponse) {
+    option (google.api.http) = {get: "/products/search"};
+  }
+}
+
+message Pagination {
+  optional int32 page = 1;
+  optional int32 page_size = 2;
+}
+
+message Product {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  float price = 4;
+  string category = 5;
+  repeated string tags = 6;
+  map<string, string> attributes = 7;
+  optional string thumbnail = 8;
+  repeated string images = 9;
+}
+
+message CreateProductRequest {
+  string name = 1;
+  string description = 2;
+  float price = 3;
+  optional string category = 4;
+  repeated string tags = 5;
+  map<string, string> attributes = 6;
+  optional string thumbnail = 7;
+  repeated string images = 8;
+}
+
+message CreateProductResponse {
+  string id = 1;
+}
+
+message GetProductRequest {
+  string id = 1;
+}
+
+message GetProductResponse {
+  Product product = 1;
+}
+
+message ListProductsRequest {
+  optional Pagination pagination = 1;
+}
+
+message ListProductsResponse {
+  repeated Product products = 1;
+  Pagination pagination = 2;
+}
+
+message UpdateProductRequest {
+  string id = 1;
+  optional string name = 2;
+  optional string description = 3;
+  optional float price = 4;
+  optional string category = 5;
+  repeated string tags = 6;
+  map<string, string> attributes = 7;
+  optional string thumbnail = 8;
+  repeated string images = 9;
+}
+
+message UpdateProductResponse {
+  string id = 1;
+}
+
+message DeleteProductRequest {
+  string id = 1;
+}
+
+message DeleteProductResponse {
+  string id = 1;
+}
+
+message SearchProductsRequest {
+  string query = 1;
+  optional Pagination pagination = 2;
+}
+
+message SearchProductsResponse {
+  repeated Product products = 1;
+  Pagination pagination = 2;
+}

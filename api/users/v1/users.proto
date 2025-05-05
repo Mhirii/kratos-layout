@@ -1,0 +1,129 @@
+syntax = "proto3";
+
+package users.v1;
+
+import "google/api/annotations.proto";
+
+option go_package = "server/api/users/v1;v1";
+option java_multiple_files = true;
+option java_package = "dev.kratos.api.users.v1";
+option java_outer_classname = "UsersProtoV1";
+
+service Users {
+  rpc CreateUser (CreateUserRequest) returns (CreateUserResponse) {
+    option (google.api.http) = {
+      post: "/users"
+      body: "*"
+    };
+  }
+  rpc GetUser (GetUserRequest) returns (GetUserResponse) {
+    option (google.api.http) = {
+      get: "/users/{id}"
+    };
+  }
+  rpc ListUsers (ListUsersRequest) returns (ListUsersResponse) {
+    option (google.api.http) = {
+      get: "/users"
+    };
+  }
+  rpc UpdateUser (UpdateUserRequest) returns (UpdateUserResponse) {
+    option (google.api.http) = {
+      patch: "/users/{id}"
+      body: "*"
+    };
+  }
+  rpc DeleteUser (DeleteUserRequest) returns (DeleteUserResponse) {
+    option (google.api.http) = {
+      delete: "/users/{id}"
+    };
+  }
+  rpc SearchUsers (SearchUsersRequest) returns (SearchUsersResponse) {
+    option (google.api.http) = {
+      get: "/users/search"
+    };
+  }
+}
+
+message Pagination {
+  optional int32 page = 1;
+  optional int32 page_size = 2;
+}
+
+message UserFilter {
+  optional string username = 1;
+  optional string email = 2;
+  optional string phone = 3;
+  optional string password = 4;
+  optional string picture = 5;
+}
+
+message User {
+  string id = 1;
+  string username = 2;
+  string email = 3;
+  string phone = 4;
+  optional string password = 5;
+  optional string picture = 6;
+}
+
+message CreateUserRequest {
+  string username = 1;
+  string email = 2;
+  string phone = 3;
+  optional string password = 4;
+  optional string picture = 5;
+}
+
+message CreateUserResponse {
+  string id = 1;
+}
+
+
+message GetUserRequest {
+  string id = 1;
+}
+
+message GetUserResponse {
+  User user = 1;
+}
+
+message ListUsersRequest {
+  optional Pagination pagination = 1;
+  optional UserFilter filter = 2;
+}
+
+message ListUsersResponse {
+  repeated User users = 1;
+  Pagination pagination = 2;
+}
+
+message UpdateUserRequest {
+  string id = 1;
+  optional string username = 2;
+  optional string email = 3;
+  optional string phone = 4;
+  optional string password = 5;
+  optional string picture = 6;
+}
+
+message UpdateUserResponse {
+  string id = 1;
+}
+
+message DeleteUserRequest {
+  string id = 1;
+}
+
+message DeleteUserResponse {
+  string id = 1;
+}
+
+message SearchUsersRequest {
+  string query = 1;
+  optional Pagination pagination = 2;
+}
+
+message SearchUsersResponse {
+  repeated User users = 1;
+  Pagination pagination = 2;
+}
